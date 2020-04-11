@@ -71,7 +71,7 @@ namespace arcoreimg_app
                 process.WaitForExit();
                 int score = int.Parse(result);
                 LoadingBar.Value = score;
-                string ResultStr = result + "%";
+                string ResultStr = result.Trim() + " %";
                 TxtProgress.Text = ResultStr.Trim();
 
                 string f_size = "";
