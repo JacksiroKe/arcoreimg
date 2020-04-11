@@ -34,22 +34,35 @@ namespace arcoreimg_app
                 CheckImage();
             }
         }
+        /// <summary>
+        /// Create a cmd Process
+        /// </summary>
+        /// <param name="args">args</param>
+        /// <returns></returns>
+
+        private Process CreateProcess(string args)
+        {
+            ProcessStartInfo procstartInfo = new ProcessStartInfo();
+            Process process = new Process();
+            procstartInfo.FileName = "Cmd.exe";
+            procstartInfo.Arguments = args;
+            // Do not show the black cmd.
+            procstartInfo.CreateNoWindow = true;
+            process.StartInfo = procstartInfo;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            return process;
+        }
+
 
         private void CheckImage()
         {
             _filesize = new FileInfo(ImgFilename).Length;
             int fsize = int.Parse(_filesize.ToString()) / 1000000;
             TxtFilename.Text = Path.GetFileName(ImgFilename);
-
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = "Cmd.exe";
-            startInfo.Arguments = "/C \"arcoreimg.exe eval-img --input_image_path=" + ImgFilename;
-            process.StartInfo = startInfo;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            Process process = CreateProcess("/C \"arcoreimg.exe eval-img --input_image_path=" + ImgFilename);
             process.Start();
 
             try
@@ -115,17 +128,8 @@ namespace arcoreimg_app
                 {
                     DirDatabase = dlgDb.FileName;
                     NewDatabase = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
-                    Process process = new Process();
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
-                    startInfo.FileName = "Cmd.exe";
-                    startInfo.Arguments = "/C \"arcoreimg.exe build-db --input_images_directory=" + DirFilename + 
-                        " --output_db_path=" + DirDatabase + "/" + NewDatabase;
-
-                    process.StartInfo = startInfo;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardInput = true;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    Process process = CreateProcess("/C \"arcoreimg.exe build-db --input_images_directory=" + DirFilename +
+                        " --output_db_path=" + DirDatabase + "/" + NewDatabase);
                     process.Start();
 
                     try
@@ -170,17 +174,8 @@ namespace arcoreimg_app
                     DirDatabase = dlgDb.FileName;
                     NewDatabase = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
 
-                    Process process = new Process();
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
-                    startInfo.FileName = "Cmd.exe";
-                    startInfo.Arguments = "/C \"arcoreimg.exe build-db --input_image_list_path=" + DirFilename +
-                        " --output_db_path=" + DirDatabase + "/" + NewDatabase;
-
-                    process.StartInfo = startInfo;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardInput = true;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    Process process = CreateProcess("/C \"arcoreimg.exe build-db --input_image_list_path=" + DirFilename +
+                        " --output_db_path=" + DirDatabase + "/" + NewDatabase);
                     process.Start();
 
                     try
