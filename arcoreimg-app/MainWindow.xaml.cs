@@ -128,8 +128,7 @@ namespace arcoreimg_app
                 {
                     DirDatabase = dlgDb.FileName;
                     NewDatabase = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
-                    Process process = CreateProcess("/C \"arcoreimg.exe build-db --input_images_directory=" + DirFilename +
-                        " --output_db_path=" + DirDatabase + "/" + NewDatabase);
+                    Process process = CreateProcess($"/C \"arcoreimg.exe build-db --input_images_directory=\"{DirFilename}\" --output_db_path=\"{Path.Combine(DirDatabase,NewDatabase)}\"");
                     process.Start();
 
                     try
