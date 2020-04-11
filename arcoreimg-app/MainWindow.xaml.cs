@@ -7,17 +7,18 @@ using System.Windows;
 namespace arcoreimg_app
 {
     /// <summary>
-    /// Interaction logic for MaarciViewer.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        string ImgFilename, DirFilename, DirDatabase, ARCoreImg, NewDatabase;
+        string SingleImagePath, FileListPath, NewDatabaseNamePath, NewDatabaseName;
         private long _filesize;
 
         public MainWindow()
         {
             InitializeComponent();
-            ARCoreImg = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "arcoreimg.exe");
+            TxtDirPath1.Text = TxtDirPath3.Text = NewDatabaseNamePath = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Documents");
+            TxtDirPath2.Text = TxtDirPath4.Text = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Downloads");
         }
 
         private void BtnImgBrowser_Click(object sender, RoutedEventArgs e)
@@ -30,10 +31,11 @@ namespace arcoreimg_app
             };
             if (dlg.ShowDialog() == true)
             {
-                ImageUri.Text = ImgFilename = dlg.FileName;
+                ImageUri.Text = SingleImagePath = dlg.FileName;
                 CheckImage();
             }
         }
+        
         /// <summary>
         /// Create a cmd Process
         /// </summary>
@@ -59,10 +61,10 @@ namespace arcoreimg_app
 
         private void CheckImage()
         {
-            _filesize = new FileInfo(ImgFilename).Length;
+            _filesize = new FileInfo(SingleImagePath).Length;
             int fsize = int.Parse(_filesize.ToString()) / 1000000;
-            TxtFilename.Text = Path.GetFileName(ImgFilename);
-            Process process = CreateProcess("/C \"arcoreimg.exe eval-img --input_image_path=" + ImgFilename);
+            TxtFilename.Text = Path.GetFileName(SingleImagePath);
+            Process process = CreateProcess("/C \"arcoreimg.exe eval-img --input_image_path=" + SingleImagePath);
             process.Start();
 
             try
@@ -103,8 +105,21 @@ namespace arcoreimg_app
                 //arcoreimg.WriteLogs("App Errors", @" " + ex.Message, @"" + ex.InnerException, @"" + ex.StackTrace);
             }
         }
+        private void BtnDbDirBrowser_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dlgDb = new CommonOpenFileDialog()
+            {
+                Title = "Select Where to save the Image Database",
+                InitialDirectory = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Documents"),
+                IsFolderPicker = true
+            };
+            if (dlgDb.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                TxtDirPath1.Text = TxtDirPath3.Text = NewDatabaseNamePath = dlgDb.FileName;
+            }
+        }
 
-        private void BtnDirBrowser_Click(object sender, RoutedEventArgs e)
+        private void BtnImgDirBrowser_Click(object sender, RoutedEventArgs e)
         {
             CommonOpenFileDialog dlgLst = new CommonOpenFileDialog()
             {
@@ -115,35 +130,22 @@ namespace arcoreimg_app
 
             if (dlgLst.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                DirFilename = dlgLst.FileName;
-            
-                CommonOpenFileDialog dlgDb = new CommonOpenFileDialog()
-                {
-                    Title = "Select Where to save the Image Database",
-                    InitialDirectory = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Documents"),
-                    IsFolderPicker = true
-                };
+                TxtDirPath2.Text = FileListPath = dlgLst.FileName;
 
-                if (dlgDb.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    DirDatabase = dlgDb.FileName;
-                    NewDatabase = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
-                    Process process = CreateProcess($"/C \"arcoreimg.exe build-db --input_images_directory=\"{DirFilename}\" --output_db_path=\"{Path.Combine(DirDatabase,NewDatabase)}\"");
-                    process.Start();
+                NewDatabaseName = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
+                Process process = CreateProcess($"/C \"arcoreimg.exe build-db --input_images_directory=\"{FileListPath}\" --output_db_path=\"{Path.Combine(NewDatabaseNamePath, NewDatabaseName)}\"");
+                process.Start();
 
-                    try
-                    {
-                        string result = process.StandardOutput.ReadToEnd();
-                        process.WaitForExit();//NewDatabase, LstFilename
-                        TxtFeedback1.Text = "A new Database: " + NewDatabase + " from an Image directory: " + DirFilename +
-                            "\n\nYou can specify another directory that contains your images to create another database.";
-                    }
-                    catch (Exception ex)
-                    {
-                        //arcoreimg.WriteLogs("App Errors", @" " + ex.Message, @"" + ex.InnerException, @"" + ex.StackTrace);
-                    }
+                try
+                {
+                    string result = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    TxtFeedback1.Text = "New database: '" + NewDatabaseName + "' created successfully!\nYou may specify another image directory to create another database.";
                 }
-            
+                catch (Exception ex)
+                {
+                    //arcoreimg.WriteLogs("App Errors", @" " + ex.Message, @"" + ex.InnerException, @"" + ex.StackTrace);
+                }
             }
 
         }
@@ -159,37 +161,24 @@ namespace arcoreimg_app
 
             if (dlgLst.ShowDialog() == true)
             {
-                DirFilename = dlgLst.FileName;
+                TxtDirPath4.Text = FileListPath = dlgLst.FileName;
 
-                CommonOpenFileDialog dlgDb = new CommonOpenFileDialog()
+                NewDatabaseName = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
+
+                Process process = CreateProcess("/C \"arcoreimg.exe build-db --input_image_list_path=" + FileListPath +
+                    " --output_db_path=" + NewDatabaseNamePath + "/" + NewDatabaseName);
+                process.Start();
+
+                try
                 {
-                    Title = "Select Where to save the Image Database",
-                    InitialDirectory = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Documents"),
-                    IsFolderPicker = true
-                };
-
-                if (dlgDb.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    DirDatabase = dlgDb.FileName;
-                    NewDatabase = "myimages_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".imgdb";
-
-                    Process process = CreateProcess("/C \"arcoreimg.exe build-db --input_image_list_path=" + DirFilename +
-                        " --output_db_path=" + DirDatabase + "/" + NewDatabase);
-                    process.Start();
-
-                    try
-                    {
-                        string result = process.StandardOutput.ReadToEnd();
-                        process.WaitForExit();//NewDatabase, LstFilename
-                        TxtFeedback2.Text = "A new database: " + NewDatabase + " from an image list file: " + DirFilename +
-                            "\n\nBrowse to another Image File List to Create a Database From";
-                    }
-                    catch (Exception ex)
-                    {
-                        //arcoreimg.WriteLogs("App Errors", @" " + ex.Message, @"" + ex.InnerException, @"" + ex.StackTrace);
-                    }
+                    string result = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();//NewDatabaseName, LstFilename
+                    TxtFeedback2.Text = "New database: '" + NewDatabaseName + "' created successfully!\nYou may browse another Image File List to create another Database";
                 }
-
+                catch (Exception ex)
+                {
+                    //arcoreimg.WriteLogs("App Errors", @" " + ex.Message, @"" + ex.InnerException, @"" + ex.StackTrace);
+                }
             }
         }
 
