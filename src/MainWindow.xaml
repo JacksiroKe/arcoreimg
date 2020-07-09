@@ -5,12 +5,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+        xmlns:arcoreimg_app="clr-namespace:arcoreimg_app.Controls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" Topmost="False"
         Title="Arcoreimg Tool" Height="500" Width="800" WindowState="Maximized" WindowStartupLocation="CenterScreen" >
 
     <Grid>
-        <dragablz:TabablzControl x:Name="TabMain" SelectedIndex="0">
+        <dragablz:TabablzControl x:Name="TabMain" SelectedIndex="0" Margin="0,-6,0,6">
             <dragablz:TabablzControl.HeaderPrefixContent>
                 <materialDesign:ColorZone Mode="PrimaryMid" Padding="8" VerticalAlignment="Center" Margin="10 0 0 0">
                     <StackPanel Orientation="Horizontal">
@@ -18,46 +19,33 @@
                     </StackPanel>
                 </materialDesign:ColorZone>
             </dragablz:TabablzControl.HeaderPrefixContent>
-            
+
             <TabItem Header="CHECK IMAGE QUALITY">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="500" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Column="0" Name="ImageUri" Text="/Resources/no_image.jpg" Visibility="Collapsed" />
+                    <ScrollViewer Grid.Row="0" PanningMode="Both" Grid.ColumnSpan="2" Background="#EEEEEE">
+                        <StackPanel Name="ImageList" Orientation="Vertical" />
+                    </ScrollViewer>
 
-                    <Grid Grid.Column="0" Background="#EEEEEE">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        
-                        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="1" Margin="-5, -5, 0, -5">
-                            <Image Name="ImgBrowser" Source="{Binding Text, ElementName=ImageUri}" Stretch="Uniform" Margin="10" Width="Auto" />
-                        </Border>
+                    <arcoreimg_app:AsProgress Grid.Row="0" x:Name="LoadingBar" Foreground="Green" Width="200" Height="200" Margin="50" VerticalAlignment="Top" HorizontalAlignment="Center" Value="0" Visibility="Collapsed"/>
 
-                    </Grid>
-                    <StackPanel Grid.Column="1" Orientation="Vertical">
-                        <TextBlock Name="TxtFeedback" Text="Select an image to Scan it" FontSize="20" Margin="10" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
+                    <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="2">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Name="TxtFeedback" Text="Select an image to Scan it Or Select a directory with Images" FontSize="15" Margin="5" TextWrapping="WrapWithOverflow" />
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="50" />
-                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Name="BtnImgBrowser" Content="BROWSE AN IMAGE" Click="BtnImgBrowser_Click" FontSize="15" HorizontalAlignment="Center" Margin="10"/>
 
-                            <ProgressBar Name="LoadingBar" Margin="10, 0" BorderBrush="Black" Foreground="Black" Background="Gray" Height="50"/>
+                                <Button Name="BtnDirBrowser" Content="BROWSE A DIRECTORY" Click="BtnDirBrowser_Click" FontSize="15" HorizontalAlignment="Center" Margin="10"/>
+                            </StackPanel>
 
-                            <TextBlock Name="TxtProgress" Text="0%" FontSize="20" Margin="10, 0" HorizontalAlignment="Center" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" Width="100" />
+                        </StackPanel>
+                    </Border>
 
-                        </Grid>
-
-                        <TextBlock Name="TxtFilename" Text="No Image selected" FontSize="20" Margin="10" TextAlignment="Center" />
-
-                    <Button Name="BtnImgBrowser" Content="BROWSE AN IMAGE" Click="BtnImgBrowser_Click" Padding="30,5" FontSize="15" HorizontalAlignment="Center" Margin="10"/>
-
-                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="CREATE AN IMAGE DATABASE FILE">
@@ -80,7 +68,7 @@
                         <Button Click="BtnImgDirBrowser_Click" Content="BROWSE DIRECTORY" Padding="30,5" FontSize="15" HorizontalAlignment="Center" Margin="10" VerticalAlignment="Center"/>
 
                     </StackPanel>
-                    
+
                 </Grid>
             </TabItem>
             <TabItem Header="CREATE A DATABASE FROM AN IMAGE LIST FILE">
@@ -91,7 +79,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Name="TxtFeedback2" Text="Browse to an Image File List to Create a Database From" FontSize="20" Margin="10" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                    
+
                     <StackPanel Orientation="Vertical" Grid.Row="1"  HorizontalAlignment="Center" Margin="10">
 
                         <TextBlock Text="NEW DATABASE DIRECTORY:" FontSize="25" Margin="10" FontWeight="Bold"/>
@@ -116,3 +104,4 @@
     </Grid>
 
 </Window>
+    

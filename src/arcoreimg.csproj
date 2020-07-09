@@ -88,6 +88,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\AsListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AsProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -96,6 +104,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\AsProgress.xaml.cs">
+      <DependentUpon>AsProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\AppCore.cs" />
+    <Compile Include="Controls\AsListItem.xaml.cs">
+      <DependentUpon>AsListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\AppTask.cs" />
+    <Compile Include="Helpers\AsScanned.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
