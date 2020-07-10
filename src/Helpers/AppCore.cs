@@ -58,24 +58,15 @@ namespace arcoreimg_app.Helpers
                 int score = int.Parse(result);
                 scan.Score = score;
 
-                switch (score)
-                {
-                    case 50:
-                        scan.Title = Path.GetFileName(imagePath) + f_size + " | Image score average!";
-                        break;
 
-                    case 75:
-                        scan.Title = Path.GetFileName(imagePath) + f_size + " | Image score above average!";
-                        break;
+                if (score < 49)
+                    scan.Title = Path.GetFileName(imagePath) + f_size + " | Poor Quality Image";
 
-                    case 100:
-                        scan.Title = Path.GetFileName(imagePath) + f_size + " | Image passed test!";
-                        break;
+                else if (score > 50 && score < 89)
+                    scan.Title = Path.GetFileName(imagePath) + f_size + " | Good Quality Image";
 
-                    default:
-                        scan.Title = Path.GetFileName(imagePath) + f_size + " | Image score poor!";
-                        break;
-                }
+                else if (score > 90)
+                    scan.Title = Path.GetFileName(imagePath) + f_size + " | Best Quality Image";
             }
             catch (Exception)
             {
